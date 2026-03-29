@@ -1,0 +1,117 @@
+<html>
+<body style="margin:0; overflow:hidden; font-family:'Comic Sans MS'; background:linear-gradient(#fff3e6, #ffe0b3); text-align:center;">
+
+<h1 style="color:#ff6b6b;">🍪 Catch the Cookie Letter!</h1>
+<h2 id="target"></h2>
+<h3 id="score">Score: 0</h3>
+
+<!-- 🍪 Mascot -->
+<div id="mascot" style="font-size:80px; margin:10px;">🍪</div>
+
+<script>
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let targetLetter = "";
+let score = 0;
+
+// 🎯 New round
+function newRound() {
+    targetLetter = letters[Math.floor(Math.random()*letters.length)];
+    document.getElementById("target").innerText = "Find: " + targetLetter;
+}
+
+// 🗣️ Kid-like voice
+function speakLetter(letter) {
+    let speech = new SpeechSynthesisUtterance(letter);
+    speech.rate = 1.2;   // faster = more playful
+    speech.pitch = 2;    // higher = more kid-like
+    speech.volume = 1;
+
+    speechSynthesis.speak(speech);
+}
+
+// 🍪 Create falling cookie
+function createCookie() {
+    const cookie = document.createElement("div");
+
+    const letter = letters[Math.floor(Math.random()*letters.length)];
+    cookie.innerText = letter;
+
+    cookie.style.position = "absolute";
+    cookie.style.left = Math.random()*window.innerWidth + "px";
+    cookie.style.top = "-50px";
+    cookie.style.width = "70px";
+    cookie.style.height = "70px";
+    cookie.style.background = "#d2691e";
+    cookie.style.borderRadius = "50%";
+    cookie.style.display = "flex";
+    cookie.style.alignItems = "center";
+    cookie.style.justifyContent = "center";
+    cookie.style.fontSize = "28px";
+    cookie.style.color = "white";
+    cookie.style.fontWeight = "bold";
+    cookie.style.cursor = "pointer";
+
+    document.body.appendChild(cookie);
+
+    // 🍫 chocolate chips
+    for (let i = 0; i < 5; i++) {
+        const chip = document.createElement("div");
+        chip.style.position = "absolute";
+        chip.style.width = "8px";
+        chip.style.height = "8px";
+        chip.style.background = "#3e2723";
+        chip.style.borderRadius = "50%";
+        chip.style.top = Math.random()*60 + "px";
+        chip.style.left = Math.random()*60 + "px";
+        cookie.appendChild(chip);
+    }
+
+    // ⬇️ fall
+    let fall = setInterval(() => {
+        cookie.style.top = (cookie.offsetTop + 3) + "px";
+
+        if (cookie.offsetTop > window.innerHeight) {
+            cookie.remove();
+            clearInterval(fall);
+        }
+    }, 20);
+
+    // 🖱️ click
+    cookie.onclick = () => {
+        let mascot = document.getElementById("mascot");
+
+        if (letter === targetLetter) {
+            score++;
+            document.getElementById("score").innerText = "Score: " + score;
+
+            // 🎉 sound
+            new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3").play();
+
+            speakLetter(letter);
+
+            // 👏 mascot reaction
+            mascot.innerText = "🍪👏";
+            setTimeout(() => mascot.innerText = "🍪", 800);
+
+        } else {
+            new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3").play();
+
+            // 😢 mascot reaction
+            mascot.innerText = "🍪😢";
+            setTimeout(() => mascot.innerText = "🍪", 800);
+        }
+
+        cookie.remove();
+        clearInterval(fall);
+        newRound();
+    };
+}
+
+// ⏱️ spawn
+setInterval(createCookie, 1000);
+
+newRound();
+</script>
+
+</body>
+</html>
