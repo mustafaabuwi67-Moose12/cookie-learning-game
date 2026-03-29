@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cookie Learning Game 🍪</title>
+  <title>Cookie Catch Game 🍪</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -9,77 +9,91 @@
       margin: 0;
       overflow: hidden;
       font-family: 'Comic Sans MS';
-      background: linear-gradient(#fff3e6, #ffe0b3);
+      background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #f4d19b 60%, #f4d19b 100%);
       text-align: center;
     }
 
+    /* HEADER UI */
+    #gameUI {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 15px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(5px);
+      z-index: 10;
+    }
+
     h1 {
-      color: #ff6b6b;
-      margin-top: 10px;
+      margin: 0;
+      color: #ff5a5a;
+      font-size: 26px;
     }
 
     #target {
-      font-size: 28px;
-      margin: 10px;
+      font-size: 22px;
+      margin-top: 5px;
     }
 
     #score {
-      font-size: 22px;
+      font-size: 20px;
     }
 
     #feedback {
-      font-size: 26px;
+      font-size: 22px;
       font-weight: bold;
-      height: 30px;
-      margin-top: 10px;
+      height: 25px;
     }
 
+    /* COOKIE STYLE */
     .cookie {
       position: absolute;
-      width: 70px;
-      height: 70px;
-      background: radial-gradient(circle, #d2691e, #8b4513);
-      border-radius: 50%;
+      width: 85px;
+      height: 85px;
+      background: url("https://cdn-icons-png.flaticon.com/512/1047/1047711.png") no-repeat center/cover;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      font-size: 28px;
       font-weight: bold;
-      font-size: 24px;
+      color: black;
       cursor: pointer;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-      animation: bounce 0.3s infinite alternate;
+      animation: float 1s infinite ease-in-out alternate;
+      filter: drop-shadow(0px 5px 8px rgba(0,0,0,0.3));
     }
 
-    .cookie:hover {
-      transform: scale(1.2);
+    .cookie:active {
+      transform: scale(0.9);
     }
 
-    @keyframes bounce {
-      from { transform: translateY(0); }
-      to { transform: translateY(5px); }
+    @keyframes float {
+      from { transform: translateY(0px); }
+      to { transform: translateY(8px); }
     }
 
+    /* EMAIL BOX */
     #emailBox {
       position: fixed;
       bottom: 0;
       width: 100%;
-      background: white;
-      padding: 15px;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+      background: #fff;
+      padding: 12px;
+      box-shadow: 0 -3px 10px rgba(0,0,0,0.2);
     }
 
     #emailBox input {
-      padding: 8px;
-      margin-top: 5px;
+      padding: 10px;
+      width: 60%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
 
     #emailBox button {
-      padding: 8px 12px;
-      background: #ff6b6b;
+      padding: 10px 15px;
+      background: #ff5a5a;
       color: white;
       border: none;
+      border-radius: 5px;
       margin-left: 5px;
       cursor: pointer;
     }
@@ -88,10 +102,12 @@
 
 <body>
 
-<h1>🍪 Catch the Cookie Letter!</h1>
-<h2 id="target"></h2>
-<h3 id="score">Score: 0</h3>
-<div id="feedback"></div>
+<div id="gameUI">
+  <h1>🍪 Catch the Cookie!</h1>
+  <div id="target"></div>
+  <div id="score">Score: 0</div>
+  <div id="feedback"></div>
+</div>
 
 <script>
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -121,7 +137,7 @@ function showFeedback(text, color) {
 
   setTimeout(() => {
     feedback.innerText = "";
-  }, 800);
+  }, 700);
 }
 
 function createCookie() {
@@ -131,13 +147,15 @@ function createCookie() {
   const letter = letters[Math.floor(Math.random() * letters.length)];
   cookie.innerText = letter;
 
-  cookie.style.left = Math.random() * (window.innerWidth - 70) + "px";
-  cookie.style.top = "-70px";
+  cookie.style.left = Math.random() * (window.innerWidth - 90) + "px";
+  cookie.style.top = "-90px";
 
   document.body.appendChild(cookie);
 
+  let speed = 3 + Math.random() * 2;
+
   let fall = setInterval(() => {
-    cookie.style.top = cookie.offsetTop + 3 + "px";
+    cookie.style.top = cookie.offsetTop + speed + "px";
 
     if (cookie.offsetTop > window.innerHeight) {
       cookie.remove();
@@ -151,11 +169,11 @@ function createCookie() {
     if (letter === targetLetter) {
       score++;
       correctSound.play();
-      showFeedback("Correct! 🎉", "green");
+      showFeedback("Nice! 🎉", "green");
     } else {
       score--;
       wrongSound.play();
-      showFeedback("Oops! ❌", "red");
+      showFeedback("Try again ❌", "red");
     }
 
     document.getElementById("score").innerText = "Score: " + score;
@@ -166,14 +184,14 @@ function createCookie() {
   };
 }
 
-// 🚀 Start game
+// START GAME
 newRound();
-setInterval(createCookie, 900);
+setInterval(createCookie, 800);
 </script>
 
-<!-- 💰 Lead capture -->
+<!-- 💰 EMAIL CAPTURE -->
 <div id="emailBox">
-  <p>🎁 Get FREE learning games for your kids!</p>
+  <p>🎁 Get more fun games for your kids!</p>
   <input type="email" placeholder="Enter your email">
   <button>Get Access</button>
 </div>
