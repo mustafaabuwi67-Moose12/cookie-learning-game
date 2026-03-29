@@ -36,8 +36,8 @@
 
     .cookie {
       position: absolute;
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       background: radial-gradient(circle, #d2691e, #8b4513);
       border-radius: 50%;
       display: flex;
@@ -45,14 +45,43 @@
       justify-content: center;
       color: white;
       font-weight: bold;
-      font-size: 22px;
+      font-size: 24px;
       cursor: pointer;
       box-shadow: 0 5px 10px rgba(0,0,0,0.2);
       transition: transform 0.2s;
+      animation: bounce 0.3s infinite alternate;
     }
 
     .cookie:hover {
       transform: scale(1.2);
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(5px); }
+    }
+
+    #emailBox {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: white;
+      padding: 15px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    }
+
+    #emailBox input {
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    #emailBox button {
+      padding: 8px 12px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      margin-left: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -68,6 +97,10 @@
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 let targetLetter = "";
 let score = 0;
+
+// 🔊 Sounds
+const correctSound = new Audio("https://www.soundjay.com/buttons/sounds/button-4.mp3");
+const wrongSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
 
 function newRound() {
   targetLetter = letters[Math.floor(Math.random() * letters.length)];
@@ -98,13 +131,13 @@ function createCookie() {
   const letter = letters[Math.floor(Math.random() * letters.length)];
   cookie.innerText = letter;
 
-  cookie.style.left = Math.random() * (window.innerWidth - 60) + "px";
-  cookie.style.top = "-60px";
+  cookie.style.left = Math.random() * (window.innerWidth - 70) + "px";
+  cookie.style.top = "-70px";
 
   document.body.appendChild(cookie);
 
   let fall = setInterval(() => {
-    cookie.style.top = cookie.offsetTop + 4 + "px";
+    cookie.style.top = cookie.offsetTop + 3 + "px";
 
     if (cookie.offsetTop > window.innerHeight) {
       cookie.remove();
@@ -117,9 +150,11 @@ function createCookie() {
 
     if (letter === targetLetter) {
       score++;
+      correctSound.play();
       showFeedback("Correct! 🎉", "green");
     } else {
       score--;
+      wrongSound.play();
       showFeedback("Oops! ❌", "red");
     }
 
@@ -131,9 +166,17 @@ function createCookie() {
   };
 }
 
+// 🚀 Start game
 newRound();
 setInterval(createCookie, 900);
 </script>
+
+<!-- 💰 Lead capture -->
+<div id="emailBox">
+  <p>🎁 Get FREE learning games for your kids!</p>
+  <input type="email" placeholder="Enter your email">
+  <button>Get Access</button>
+</div>
 
 </body>
 </html>
