@@ -2,78 +2,138 @@
 <html>
 <head>
   <title>Cookie Learning Game 🍪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Comic Sans MS';
+      background: linear-gradient(#fff3e6, #ffe0b3);
+      text-align: center;
+    }
+
+    h1 {
+      color: #ff6b6b;
+      margin-top: 10px;
+    }
+
+    #target {
+      font-size: 28px;
+      margin: 10px;
+    }
+
+    #score {
+      font-size: 22px;
+    }
+
+    #feedback {
+      font-size: 26px;
+      font-weight: bold;
+      height: 30px;
+      margin-top: 10px;
+    }
+
+    .cookie {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, #d2691e, #8b4513);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+
+    .cookie:hover {
+      transform: scale(1.2);
+    }
+  </style>
 </head>
 
-<body style="margin:0; overflow:hidden; font-family:'Comic Sans MS'; background:linear-gradient(#fff3e6, #ffe0b3); text-align:center;">
+<body>
 
-  <h1 style="color:#ff6b6b;">🍪 Catch the Cookie Letter!</h1>
-  <h2 id="target"></h2>
-  <h3 id="score">Score: 0</h3>
+<h1>🍪 Catch the Cookie Letter!</h1>
+<h2 id="target"></h2>
+<h3 id="score">Score: 0</h3>
+<div id="feedback"></div>
 
-  <!-- Cookie mascot -->
-  <div id="mascot" style="font-size:80px; margin:10px;">🍪</div>
+<script>
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let targetLetter = "";
+let score = 0;
 
-  <script>
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let targetLetter = "";
-    let score = 0;
+function newRound() {
+  targetLetter = letters[Math.floor(Math.random() * letters.length)];
+  document.getElementById("target").innerText = "Find: " + targetLetter;
+}
 
-    function newRound() {
-      targetLetter = letters[Math.floor(Math.random() * letters.length)];
-      document.getElementById("target").innerText = "Find: " + targetLetter;
+function speakLetter(letter) {
+  let speech = new SpeechSynthesisUtterance(letter);
+  speech.rate = 1.2;
+  speech.pitch = 2;
+  speechSynthesis.speak(speech);
+}
+
+function showFeedback(text, color) {
+  const feedback = document.getElementById("feedback");
+  feedback.innerText = text;
+  feedback.style.color = color;
+
+  setTimeout(() => {
+    feedback.innerText = "";
+  }, 800);
+}
+
+function createCookie() {
+  const cookie = document.createElement("div");
+  cookie.className = "cookie";
+
+  const letter = letters[Math.floor(Math.random() * letters.length)];
+  cookie.innerText = letter;
+
+  cookie.style.left = Math.random() * (window.innerWidth - 60) + "px";
+  cookie.style.top = "-60px";
+
+  document.body.appendChild(cookie);
+
+  let fall = setInterval(() => {
+    cookie.style.top = cookie.offsetTop + 4 + "px";
+
+    if (cookie.offsetTop > window.innerHeight) {
+      cookie.remove();
+      clearInterval(fall);
+    }
+  }, 20);
+
+  cookie.onclick = () => {
+    speakLetter(letter);
+
+    if (letter === targetLetter) {
+      score++;
+      showFeedback("Correct! 🎉", "green");
+    } else {
+      score--;
+      showFeedback("Oops! ❌", "red");
     }
 
-    function speakLetter(letter) {
-      let speech = new SpeechSynthesisUtterance(letter);
-      speech.rate = 1.2;
-      speech.pitch = 2;
-      speech.volume = 1;
-      speechSynthesis.speak(speech);
-    }
+    document.getElementById("score").innerText = "Score: " + score;
 
-    function createCookie() {
-      const cookie = document.createElement("div");
-
-      const letter = letters[Math.floor(Math.random() * letters.length)];
-      cookie.innerText = letter;
-
-      cookie.style.position = "absolute";
-      cookie.style.left = Math.random() * window.innerWidth + "px";
-      cookie.style.top = "-50px";
-      cookie.style.fontSize = "40px";
-      cookie.style.cursor = "pointer";
-
-      document.body.appendChild(cookie);
-
-      let fall = setInterval(() => {
-        cookie.style.top = cookie.offsetTop + 3 + "px";
-
-        if (cookie.offsetTop > window.innerHeight) {
-          cookie.remove();
-          clearInterval(fall);
-        }
-      }, 20);
-
-      cookie.onclick = () => {
-        speakLetter(letter);
-
-        if (letter === targetLetter) {
-          score++;
-        } else {
-          score--;
-        }
-
-        document.getElementById("score").innerText = "Score: " + score;
-
-        cookie.remove();
-        clearInterval(fall);
-        newRound();
-      };
-    }
-
+    cookie.remove();
+    clearInterval(fall);
     newRound();
-    setInterval(createCookie, 1000);
-  </script>
+  };
+}
+
+newRound();
+setInterval(createCookie, 900);
+</script>
 
 </body>
 </html>
